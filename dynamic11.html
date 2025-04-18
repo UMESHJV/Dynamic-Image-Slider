@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Image Slider</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+    }
+
+    .slider {
+      position: relative;
+      width: 90%;
+      max-width: 900px;
+      overflow: hidden;
+      border-radius: 20px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    .slides {
+      display: flex;
+      transition: transform 0.6s ease-in-out;
+    }
+
+    .slide {
+      min-width: 100%;
+      position: relative;
+    }
+
+    .slide img {
+      width: 100%;
+      height: 500px;
+      object-fit: cover;
+      border-radius: 20px 20px 0 0;
+    }
+
+    .caption {
+      position: absolute;
+      bottom: 30px;
+      left: 30px;
+      background: rgba(0, 0, 0, 0.5);
+      color: #fff;
+      padding: 15px;
+      border-radius: 10px;
+    }
+
+    .caption h2 {
+      margin-bottom: 0;
+      font-size: 24px;
+    }
+
+    .navigation {
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      transform: translateY(-50%);
+      padding: 0 1rem;
+    }
+
+    .nav-btn {
+      background-color: rgba(0, 0, 0, 0.4);
+      color: white;
+      border: none;
+      padding: 12px 16px;
+      cursor: pointer;
+      font-size: 24px;
+      border-radius: 50%;
+    }
+
+    .thumbnails {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .thumbnails img {
+      width: 100px;
+      height: 60px;
+      object-fit: cover;
+      cursor: pointer;
+      border: 3px solid transparent;
+      border-radius: 10px;
+      transition: 0.3s;
+    }
+
+    .thumbnails img.active {
+      border-color: #007BFF;
+    }
+
+    @media (max-width: 600px) {
+      .slide img {
+        height: 300px;
+      }
+      .caption h2 {
+        font-size: 18px;
+      }
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="slider">
+    <div class="slides" id="slides">
+      <div class="slide">
+        <img src="https://picsum.photos/id/1015/900/500" alt="Image 1">
+        <div class="caption">
+          <h2>Image 1</h2>
+        </div>
+      </div>
+      <div class="slide">
+        <img src="https://picsum.photos/id/1016/900/500" alt="Image 2">
+        <div class="caption">
+          <h2>Image 2</h2>
+        </div>
+      </div>
+      <div class="slide">
+        <img src="https://picsum.photos/id/1018/900/500" alt="Image 3">
+        <div class="caption">
+          <h2>Image 3</h2>
+        </div>
+      </div>
+      <div class="slide">
+        <img src="https://picsum.photos/id/1020/900/500" alt="Image 4">
+        <div class="caption">
+          <h2>Image 4</h2>
+        </div>
+      </div>
+    </div>
+    <div class="navigation">
+      <button class="nav-btn" id="prev">❮</button>
+      <button class="nav-btn" id="next">❯</button>
+    </div>
+  </div>
+
+  <div class="thumbnails" id="thumbnails">
+    <img src="https://picsum.photos/id/1015/200/100" data-index="0" />
+    <img src="https://picsum.photos/id/1016/200/100" data-index="1" />
+    <img src="https://picsum.photos/id/1018/200/100" data-index="2" />
+    <img src="https://picsum.photos/id/1020/200/100" data-index="3" />
+  </div>
+
+  <script>
+    const slides = document.getElementById("slides");
+    const thumbnails = document.querySelectorAll("#thumbnails img");
+    const totalSlides = slides.children.length;
+    let index = 0;
+
+    function showSlide(i) {
+      index = (i + totalSlides) % totalSlides;
+      slides.style.transform = `translateX(-${index * 100}%)`;
+      thumbnails.forEach(thumb => thumb.classList.remove("active"));
+      thumbnails[index].classList.add("active");
+    }
+
+    document.getElementById("prev").addEventListener("click", () => {
+      showSlide(index - 1);
+    });
+
+    document.getElementById("next").addEventListener("click", () => {
+      showSlide(index + 1);
+    });
+
+    thumbnails.forEach((thumb, i) => {
+      thumb.addEventListener("click", () => showSlide(i));
+    });
+
+    let startX = 0;
+    slides.addEventListener("touchstart", (e) => startX = e.touches[0].clientX);
+    slides.addEventListener("touchend", (e) => {
+      let endX = e.changedTouches[0].clientX;
+      if (startX - endX > 50) showSlide(index + 1);
+      else if (endX - startX > 50) showSlide(index - 1);
+    });
+
+    setInterval(() => {
+      showSlide(index + 1);
+    }, 5000);
+
+    showSlide(0); // Initialize first slide
+  </script>
+</body>
+</html>
